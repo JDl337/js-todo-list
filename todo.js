@@ -2,26 +2,66 @@ const addToDoButton = document.getElementById("addToDo");
 const inputField = document.getElementById("inputField");
 const toDoContainer = document.getElementById("toDoContainer");
 
+const toDos = []
+
 addToDoButton.addEventListener('click', () => {
 
   if (inputField.value === '') {
     return;
   }
 
-  const p = document.createElement('p');
-
-  p.textContent = inputField.value;
-  p.classList.add('paragraph-styling');
-
-  toDoContainer.appendChild(p);
-
+  toDos.push({ desc: inputField.value, done: false });
   inputField.value = "";
 
-  p.addEventListener('click', () => {
-    p.style.textDecoration = 'line-through';
-  })
-
-  p.addEventListener('dblclick', () => {
-    toDoContainer.removeChild(p);
-  })
+  displayToDos();
 })
+
+function displayToDos() {
+
+  while (toDoContainer.lastChild) {
+    toDoContainer.removeChild(toDoContainer.lastChild);
+  }
+
+  let i = 0;
+  for (todoItem of toDos) {
+    const p = document.createElement('p');
+    const btn = document.createElement('button');
+    const container = document.createElement('div');
+
+    btn.textContent = 'X';
+    btn.classList.add('delete-button');
+
+    const fn = (function(x) {
+      return function() {
+        toDos.splice(x, 1)
+        displayToDos();
+      }
+    })(i)
+
+    btn.addEventListener('click', fn);
+
+    container.classList.add('todo-item');
+
+    p.textContent = todoItem.desc;
+    p.classList.add('paragraph-styling');
+
+    if (todoItem.done) {
+      p.classList.add('todo-done');
+    }
+
+    const toggleDone = (function(x) {
+      return function() {
+        toDos[x].done = toDos[x].done ? false : true;
+        p.classList.toggle('todo-done');
+      }
+    })(i)
+
+    p.addEventListener('click', toggleDone);
+
+    container.appendChild(p);
+    container.appendChild(btn);
+    toDoContainer.appendChild(container);
+
+    i++;
+  }
+}
