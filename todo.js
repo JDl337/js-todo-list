@@ -2,7 +2,16 @@ const addToDoButton = document.getElementById("addToDo");
 const inputField = document.getElementById("inputField");
 const toDoContainer = document.getElementById("toDoContainer");
 
-const toDos = []
+let toDos = JSON.parse(localStorage.getItem("todos"));
+if (toDos === null) {
+  toDos = [];
+} else {
+  displayToDos();
+}
+
+document.addEventListener("visibilitychange", () => {
+  localStorage.setItem("todos", JSON.stringify(toDos));
+})
 
 addToDoButton.addEventListener('click', () => {
 
@@ -65,3 +74,4 @@ function displayToDos() {
     i++;
   }
 }
+
